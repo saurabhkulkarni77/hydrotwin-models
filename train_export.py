@@ -20,6 +20,7 @@ from train_lstm_normal import prepare, fit, LSTMNet
 from optimize_tr_gcn import TransformerFlex
 from train_sota8 import TFTLite
 from train_new_arch import PatchTST
+from train_pilstm_v2 import PILSTMv2
 
 PROJ = Path(os.environ.get("HYDROTWIN_PROJ", Path(__file__).resolve().parent))
 RES = PROJ / "ml" / "results"
@@ -30,6 +31,7 @@ MODELS = [
     ("Transformer", lambda: TransformerFlex(d=16, layers=1, heads=2)),
     ("TFT", TFTLite),
     ("PatchTST", PatchTST),
+    ("PILSTMv2", PILSTMv2),
 ]
 WD, MAX_EPOCHS, PATIENCE = 1e-5, 60, 7
 
