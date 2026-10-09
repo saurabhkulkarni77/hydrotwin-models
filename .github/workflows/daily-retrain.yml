@@ -1,0 +1,48 @@
+name: daily-retrain
+
+on:
+  schedule:
+    - cron: '0 8 * * *'   # ~3am US Central
+  workflow_dispatch:
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: install torch (CPU)
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: install deps
+        run: pip install -r requirements.txt
+
+      - name: refresh daily data
+        run: python refresh_data.py
+
+      - name: train 4 models (checkpoints)
+        run: python train_export.py
+
+      - name: export ONNX
+        run: python export_onnx.py --out onnx
+
+      - name: publish models to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./onnx
+          publish_branch: gh-pages
+
+      - name: commit refreshed data
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add data/daily
+          git commit -m "daily data refresh $(date +%F)" || true
+          git push
