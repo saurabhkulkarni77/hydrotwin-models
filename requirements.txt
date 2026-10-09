@@ -3,3 +3,4 @@ pandas
 onnx
 scipy
 statsmodels
+onnxruntime
