@@ -5,7 +5,7 @@ Reads ml/checkpoints/<Model>/<site>.pt, exports to ml/onnx/<site>/<Model>.onnx
 (input "window", dynamic batch x 29 x 6), then runs onnxruntime on one REAL
 window from prepare() and requires max abs diff vs PyTorch < 1e-4.
 """
-import sys, json
+import sys, json, os
 from pathlib import Path
 import numpy as np, torch
 
