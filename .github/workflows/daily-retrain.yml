@@ -2,7 +2,7 @@ name: daily-retrain
 
 on:
   schedule:
-    - cron: '0 8 * * *'   # ~3am US Central
+    - cron: '0 8 * * 0'   # weekly: Sunday ~3am US Central
   workflow_dispatch:
 
 jobs:
