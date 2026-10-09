@@ -1,0 +1,406 @@
+{
+ "01463500": {
+  "ARIMA": {
+   "order": [
+    1,
+    1,
+    2
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    1,
+    1,
+    2
+   ],
+   "seasonal_order": null
+  },
+  "GP_RBF": {
+   "ls": 3.0,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 3.0,
+   "noise": 0.2
+  }
+ },
+ "01646500": {
+  "ARIMA": {
+   "order": [
+    3,
+    0,
+    3
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    3,
+    0,
+    3
+   ],
+   "seasonal_order": [
+    1,
+    0,
+    1,
+    7
+   ]
+  },
+  "GP_RBF": {
+   "ls": 3.0,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 3.0,
+   "noise": 0.2
+  }
+ },
+ "02320500": {
+  "ARIMA": {
+   "order": [
+    1,
+    1,
+    0
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    1,
+    1,
+    0
+   ],
+   "seasonal_order": [
+    0,
+    1,
+    1,
+    7
+   ]
+  },
+  "GP_RBF": {
+   "ls": 3.0,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 3.0,
+   "noise": 0.2
+  }
+ },
+ "03294500": {
+  "ARIMA": {
+   "order": [
+    3,
+    0,
+    2
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    3,
+    0,
+    2
+   ],
+   "seasonal_order": [
+    1,
+    1,
+    1,
+    7
+   ]
+  },
+  "GP_RBF": {
+   "ls": 3.0,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 3.0,
+   "noise": 0.2
+  }
+ },
+ "05331000": {
+  "ARIMA": {
+   "order": [
+    3,
+    0,
+    1
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    3,
+    0,
+    1
+   ],
+   "seasonal_order": [
+    0,
+    0,
+    1,
+    7
+   ]
+  },
+  "GP_RBF": {
+   "ls": 3.0,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 3.0,
+   "noise": 0.2
+  }
+ },
+ "06214500": {
+  "ARIMA": {
+   "order": [
+    1,
+    0,
+    0
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    1,
+    0,
+    0
+   ],
+   "seasonal_order": null
+  },
+  "GP_RBF": {
+   "ls": 3.0,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 3.0,
+   "noise": 0.2
+  }
+ },
+ "06934500": {
+  "ARIMA": {
+   "order": [
+    1,
+    0,
+    0
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    1,
+    0,
+    0
+   ],
+   "seasonal_order": [
+    1,
+    1,
+    1,
+    7
+   ]
+  },
+  "GP_RBF": {
+   "ls": 3.0,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 3.0,
+   "noise": 0.2
+  }
+ },
+ "07374000": {
+  "ARIMA": {
+   "order": [
+    2,
+    0,
+    1
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    2,
+    0,
+    1
+   ],
+   "seasonal_order": [
+    1,
+    0,
+    1,
+    7
+   ]
+  },
+  "GP_RBF": {
+   "ls": 3.0,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 0.7,
+   "noise": 0.2
+  }
+ },
+ "08057000": {
+  "ARIMA": {
+   "order": [
+    2,
+    0,
+    0
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    2,
+    0,
+    0
+   ],
+   "seasonal_order": null
+  },
+  "GP_RBF": {
+   "ls": 3.0,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 3.0,
+   "noise": 0.2
+  }
+ },
+ "08158000": {
+  "ARIMA": {
+   "order": [
+    3,
+    1,
+    2
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    3,
+    1,
+    2
+   ],
+   "seasonal_order": null
+  },
+  "GP_RBF": {
+   "ls": 3.0,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 3.0,
+   "noise": 0.2
+  }
+ },
+ "08313000": {
+  "ARIMA": {
+   "order": [
+    0,
+    0,
+    3
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    0,
+    0,
+    3
+   ],
+   "seasonal_order": [
+    1,
+    0,
+    0,
+    7
+   ]
+  },
+  "GP_RBF": {
+   "ls": 1.5,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 0.5,
+   "noise": 0.2
+  }
+ },
+ "09380000": {
+  "ARIMA": {
+   "order": [
+    1,
+    0,
+    3
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    1,
+    0,
+    3
+   ],
+   "seasonal_order": null
+  },
+  "GP_RBF": {
+   "ls": 3.0,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 3.0,
+   "noise": 0.2
+  }
+ },
+ "11447650": {
+  "ARIMA": {
+   "order": [
+    3,
+    1,
+    2
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    3,
+    1,
+    2
+   ],
+   "seasonal_order": [
+    1,
+    1,
+    1,
+    7
+   ]
+  },
+  "GP_RBF": {
+   "ls": 3.0,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 3.0,
+   "noise": 0.2
+  }
+ },
+ "14105700": {
+  "ARIMA": {
+   "order": [
+    2,
+    0,
+    3
+   ],
+   "seasonal_order": null
+  },
+  "SARIMA": {
+   "order": [
+    2,
+    0,
+    3
+   ],
+   "seasonal_order": null
+  },
+  "GP_RBF": {
+   "ls": 3.0,
+   "noise": 0.2
+  },
+  "GP_Matern": {
+   "ls": 3.0,
+   "noise": 0.2
+  }
+ }
+}
