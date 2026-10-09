@@ -26,17 +26,31 @@ jobs:
       - name: refresh daily data
         run: python refresh_data.py
 
-      - name: train 4 models (checkpoints)
+      - name: train 4 neural models (checkpoints)
         run: python train_export.py
 
       - name: export ONNX
         run: python export_onnx.py --out onnx
 
-      - name: publish models to GitHub Pages
+      - name: export ARIMA/SARIMA/GP params (fixed hyperparams, no grid)
+        run: python export_params.py
+        env:
+          HYDROTWIN_PROJ: .
+          HYDROTWIN_PARAMS_OUT: ./params_out
+          HYDROTWIN_HYPER: ./classical_hyper.json
+
+      - name: stage Pages content (preserve /onnx and /params URL prefixes)
+        run: |
+          mkdir -p pages
+          cp -r onnx pages/onnx
+          cp -r params_out pages/params
+          printf '<html><body><h1>HydroTwin model server</h1><p>ONNX models + ARIMA/SARIMA/GP params, refreshed weekly.</p></body></html>' > pages/index.html
+
+      - name: publish to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./onnx
+          publish_dir: ./pages
           publish_branch: gh-pages
 
       - name: commit refreshed data
