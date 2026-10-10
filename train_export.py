@@ -32,6 +32,7 @@ MODELS = [
     ("TFT", TFTLite),
     ("PatchTST", PatchTST),
     ("PILSTMv2", PILSTMv2),
+    ("PILSTMv1", LSTMNet),  # v1 shares LSTM arch; physics in loss (see train_pilstm.py)
 ]
 WD, MAX_EPOCHS, PATIENCE = 1e-5, 60, 7
 

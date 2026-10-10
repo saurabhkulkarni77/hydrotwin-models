@@ -27,6 +27,7 @@ MODELS = [
     ("TFT", TFTLite),
     ("PatchTST", PatchTST),
     ("PILSTMv2", PILSTMv2),
+    ("PILSTMv1", LSTMNet),
 ]
 
 
