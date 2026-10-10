@@ -48,11 +48,21 @@ jobs:
           HYDROTWIN_PARAMS_OUT: ./params_out
           HYDROTWIN_HYPER: ./classical_hyper.json
 
+      - name: refresh ablation results (6/7/8/9-feature subsets)
+        run: python train_ablation.py --all
+        env:
+          HYDROTWIN_NRCS_XLSX: ./data/nrcs_export.xlsx
+        env:
+          HYDROTWIN_PROJ: .
+          HYDROTWIN_PARAMS_OUT: ./params_out
+          HYDROTWIN_HYPER: ./classical_hyper.json
+
       - name: stage Pages content (preserve /onnx and /params URL prefixes)
         run: |
           mkdir -p pages
           cp -r onnx pages/onnx
           cp -r params_out pages/params
+          cp ablation_results.json pages/ 2>/dev/null || true
           printf '<html><body><h1>HydroTwin model server</h1><p>ONNX models + ARIMA/SARIMA/GP params, refreshed weekly.</p></body></html>' > pages/index.html
 
       - name: publish to GitHub Pages
