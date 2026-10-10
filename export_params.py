@@ -4,9 +4,11 @@
 Per station, writes <OUT>/<site>/{ARIMA,SARIMA,GP_RBF,GP_Matern}.json:
 - ARIMA/SARIMA: order, seasonal_order, const, ar/ma/sar/sma coefficients.
   JS: difference series -> ARMA residual recursion -> 7-step forecast -> undifference.
-- GP: kernel, ls, noise, feature mu/sd (8), inducing points Z (<=1000x8),
+- GP: kernel, ls, noise, feature mu/sd (11), inducing points Z (<=1000x11),
   alpha weights (<=1000x7), tsd (7).
-  JS: 8 window features -> standardize -> k(z,Z) @ alpha -> *tsd + last -> exp.
+  JS: 11 window features -> standardize -> k(z,Z) @ alpha -> *tsd + last -> exp.
+  The 11 features = 8 original USGS summary features + soil_sms_8in_pct,
+  soil_temp_2in_F, swe_in at the issue date (broadcast across the window).
 
 Uses FIXED hyperparameters from classical_hyper.json (no grid search).
 ARIMA/SARIMA fit on train+val log-flow; GP fit on train+val windows (original protocol).
@@ -32,9 +34,12 @@ WIN, LEADS = 29, 7
 
 def features(X):
     lf = np.log(X[:, :, 4]); rain = X[:, :, 3]; tm = X[:, :, 2]
-    return np.stack([lf[:, -1], lf[:, -1] - lf[:, -2], lf[:, -1] - lf[:, -8], rain[:, -1],
+    base = np.stack([lf[:, -1], lf[:, -1] - lf[:, -2], lf[:, -1] - lf[:, -8], rain[:, -1],
                      rain[:, -3:].sum(1), rain[:, -7:].sum(1), rain.sum(1),
                      tm[:, -7:].mean(1)], 1)
+    if X.shape[2] >= 9:
+        return np.concatenate([base, X[:, -1, 6:9]], 1)
+    return base
 
 
 def matern(A, B, ls):
@@ -52,6 +57,10 @@ def build_windows(site):
     v = d[cols].to_numpy(float)
     lf = np.log(d.flow_cfs.to_numpy(float))
     ok = ~np.isnan(v).any(1)
+    # soil/snow LUT: (site, issue date) -> raw (sms, stmp, swe); missing soil -> train median, swe -> 0
+    sys.path.insert(0, str(HERE))
+    from train_lstm_normal import load_soilsnow_lut
+    lut = load_soilsnow_lut()
     Xs, Ys, issues = [], [], []
     for t in range(WIN - 1, len(d) - LEADS):
         if not ok[t - WIN + 1:t + 1].all():
@@ -60,10 +69,18 @@ def build_windows(site):
             continue
         Xs.append(v[t - WIN + 1:t + 1])
         Ys.append(lf[t + 1:t + 1 + LEADS])
-        issues.append(d.date.iloc[t])
-    X = np.array(Xs); Y = np.array(Ys)
+        issues.append(d.date.iloc[t].strftime("%Y-%m-%d"))
+    X6 = np.array(Xs); Y = np.array(Ys)
     ft = pd.to_datetime(issues) + pd.Timedelta(days=1)
     split = np.where(ft <= TRAIN_END, "train", np.where(ft <= TEST_START, "val", "test"))
+    tr = split == "train"
+    raw = np.array([lut.get((site, i), (np.nan, np.nan, 0.0)) for i in issues], float)
+    med_sms = float(np.nanmedian(raw[tr, 0])) if tr.sum() else 50.0
+    med_stmp = float(np.nanmedian(raw[tr, 1])) if tr.sum() else 60.0
+    sms = np.where(np.isnan(raw[:, 0]), med_sms, raw[:, 0])
+    stmp = np.where(np.isnan(raw[:, 1]), med_stmp, raw[:, 1])
+    X = np.zeros((len(X6), WIN, 9)); X[:, :, :6] = X6
+    X[:, :, 6] = sms[:, None]; X[:, :, 7] = stmp[:, None]; X[:, :, 8] = raw[:, 2][:, None]
     return X, Y, split
 
 

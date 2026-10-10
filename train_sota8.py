@@ -1,13 +1,11 @@
 """8 more SOTA forecasters: N-HiTS, TimesNet-lite, TFT-lite, N-BEATS, SegRNN, TimeMixer-lite, ModernTCN-lite, FITS."""
 import sys, json, time
-import os
 from pathlib import Path
 import numpy as np, torch, torch.nn as nn, torch.nn.functional as F
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, "/home/hatch/workspace/hydrotwin_colab")
 from train_lstm_normal import prepare, rmse_log, predict_logflow, fit
-PROJ = Path(os.environ.get("HYDROTWIN_PROJ", Path(__file__).resolve().parent))
-RES = PROJ / "ml" / "results"
+RES = Path("/home/hatch/workspace/user/files/HydroTwin_10yr_Map/ml/results")
 torch.set_num_threads(2)
 
 # ---------------- N-HiTS (hierarchical MLP) ----------------
@@ -80,7 +78,7 @@ class GRN(nn.Module):
 class TFTLite(nn.Module):
     def __init__(self, d=48, heads=4):
         super().__init__()
-        self.emb = nn.Linear(6, d)
+        self.emb = nn.Linear(9, d)
         self.lstm = nn.LSTM(d, d, batch_first=True)
         self.grn = GRN(d)
         self.att = nn.MultiheadAttention(d, heads, batch_first=True)

@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 for v in ("HYDROTWIN_TRAIN_END", "HYDROTWIN_VAL_END", "HYDROTWIN_TEST_START"):
     os.environ.pop(v, None)
 
-from train_lstm_normal import prepare, fit, LSTMNet
+from train_lstm_normal import prepare9, fit, LSTMNet
 from optimize_tr_gcn import TransformerFlex
 from train_sota8 import TFTLite
 from train_new_arch import PatchTST
@@ -45,9 +45,9 @@ def subset(P, si):
 
 def main():
     torch.set_num_threads(2)
-    print("building windows...", flush=True)
-    P = prepare()
-    print("windows:", len(P["X"]), "| stations:", list(P["sites"]), flush=True)
+    print("building 9-feature windows (USGS + soil + snow)...", flush=True)
+    P = prepare9()
+    print("windows:", len(P["X"]), "| stations:", list(P["sites"]), "| features:", P["X"].shape[2], flush=True)
     blr_path = Path(__file__).resolve().parent / "best_lr.json"
     if blr_path.exists():
         res = json.loads(blr_path.read_text())

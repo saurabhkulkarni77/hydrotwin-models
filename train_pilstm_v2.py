@@ -20,7 +20,7 @@ LAM = 0.15  # physics weight
 class PILSTMv2(nn.Module):
     def __init__(self, hidden=32):
         super().__init__()
-        self.lstm = nn.LSTM(6, hidden, batch_first=True)
+        self.lstm = nn.LSTM(9, hidden, batch_first=True)
         self.head = nn.Linear(hidden, 7)
     def forward(self, x):
         h, _ = self.lstm(x)

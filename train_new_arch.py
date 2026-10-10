@@ -1,13 +1,11 @@
 """Latest forecasting architectures: PatchTST, iTransformer, DLinear, TiDE, Mamba-lite."""
 import sys, json, time
-import os
 from pathlib import Path
 import numpy as np, torch, torch.nn as nn, torch.nn.functional as F
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, "/home/hatch/workspace/hydrotwin_colab")
 from train_lstm_normal import prepare, rmse_log, predict_logflow, fit, val_loss
-PROJ = Path(os.environ.get("HYDROTWIN_PROJ", Path(__file__).resolve().parent))
-RES = PROJ / "ml" / "results"
+RES = Path("/home/hatch/workspace/user/files/HydroTwin_10yr_Map/ml/results")
 torch.set_num_threads(2)
 
 # ---------------- PatchTST: patch the series, Transformer on patches ----------------
@@ -16,7 +14,7 @@ class PatchTST(nn.Module):
         super().__init__()
         self.patch, self.stride = patch, stride
         self.npatch = (29 - patch)//stride + 1
-        self.emb = nn.Linear(patch*6, d)
+        self.emb = nn.Linear(patch*9, d)
         self.pos = nn.Parameter(torch.zeros(1, self.npatch, d))
         self.blocks = nn.ModuleList([nn.ModuleDict({
             "att": nn.MultiheadAttention(d, heads, batch_first=True),

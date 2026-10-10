@@ -1,19 +1,17 @@
 """Grid-search Transformer (d x layers) and GCN (hidden x gc_layers)."""
 import sys, json, time, itertools, math
-import os
 from pathlib import Path
 import numpy as np, torch, torch.nn as nn
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, "/home/hatch/workspace/hydrotwin_colab")
 from train_lstm_normal import prepare, rmse_log, fit, val_loss, predict_logflow
-PROJ = Path(os.environ.get("HYDROTWIN_PROJ", Path(__file__).resolve().parent))
-RES = PROJ / "ml" / "results"
+RES = Path("/home/hatch/workspace/user/files/HydroTwin_10yr_Map/ml/results")
 torch.set_num_threads(2)
 
 class TransformerFlex(nn.Module):
     def __init__(self, d=16, layers=1, heads=2, T=29):
         super().__init__()
-        self.emb = nn.Linear(6, d); self.pos = nn.Parameter(torch.zeros(1, T, d))
+        self.emb = nn.Linear(9, d); self.pos = nn.Parameter(torch.zeros(1, T, d))
         self.blocks = nn.ModuleList()
         for _ in range(layers):
             self.blocks.append(nn.ModuleDict({

@@ -2,15 +2,15 @@
 """Export the 56 trained checkpoints to ONNX and verify each against PyTorch.
 
 Reads ml/checkpoints/<Model>/<site>.pt, exports to ml/onnx/<site>/<Model>.onnx
-(input "window", dynamic batch x 29 x 6), then runs onnxruntime on one REAL
-window from prepare() and requires max abs diff vs PyTorch < 1e-4.
+(input "window", dynamic batch x 29 x 9), then runs onnxruntime on one REAL
+window from prepare9() and requires max abs diff vs PyTorch < 1e-4.
 """
 import sys, json, os
 from pathlib import Path
 import numpy as np, torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from train_lstm_normal import prepare, LSTMNet
+from train_lstm_normal import prepare9, LSTMNet
 from optimize_tr_gcn import TransformerFlex
 from train_sota8 import TFTLite
 from train_new_arch import PatchTST
@@ -36,7 +36,7 @@ def main(out_dir=None):
     if out_dir:
         ONNXD = Path(out_dir)
     torch.set_num_threads(2)
-    P = prepare()
+    P = prepare9()
     site_idx = {s: i for i, s in enumerate(P["sites"])}
     ok, fail = 0, []
     for name, fn in MODELS:

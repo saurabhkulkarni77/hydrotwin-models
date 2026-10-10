@@ -11,7 +11,7 @@ import sys, json, time, os
 from pathlib import Path
 import numpy as np, pandas as pd, torch, torch.nn as nn
 
-PROJ = Path(os.environ.get("HYDROTWIN_PROJ", Path(__file__).resolve().parent))
+PROJ = Path("/home/hatch/workspace/user/files/HydroTwin_10yr_Map")
 DAILY = PROJ / "data" / "daily"
 RES = PROJ / "ml" / "results"
 DAYS = pd.date_range("2016-10-01", "2026-09-30", freq="D")
@@ -25,7 +25,7 @@ torch.set_num_threads(1)
 class LSTMNet(nn.Module):
     def __init__(self, hidden=16, dropout=0.0):
         super().__init__()
-        self.rnn = nn.LSTM(6, hidden, batch_first=True)
+        self.rnn = nn.LSTM(9, hidden, batch_first=True)
         self.drop = nn.Dropout(dropout)
         self.head = nn.Linear(hidden, 7)
 
@@ -148,3 +148,95 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# ---------------- 9-feature pipeline: 6 USGS + soil/snow ----------------
+_SOILSNOW_LUT = None
+def load_soilsnow_lut():
+    """(site, date) -> (sms_8in_pct, soil_temp_2in_F, swe_in). Cached.
+    Path from HYDROTWIN_NRCS_XLSX env, else local nrcs_export.xlsx, else the
+    original absolute path. Also merges data/nrcs_daily.csv if present (fresh
+    data appended by refresh_data.py)."""
+    global _SOILSNOW_LUT
+    if _SOILSNOW_LUT is not None:
+        return _SOILSNOW_LUT
+    import os
+    import pandas as pd
+    xlsx = os.environ.get("HYDROTWIN_NRCS_XLSX")
+    if not xlsx:
+        for cand in ["data/nrcs_export.xlsx",
+                     "/home/hatch/workspace/user/files/HydroTwin_NRCS_export.xlsx",
+                     "/home/hatch/workspace/hydrotwin_colab/ghrepo/data/nrcs_export.xlsx"]:
+            import pathlib
+            if pathlib.Path(cand).exists():
+                xlsx = cand
+                break
+    d = pd.read_excel(xlsx,
+                      sheet_name="Features+targets NRCS",
+                      usecols=["site", "date", "soil_sms_8in_pct", "soil_temp_2in_degF", "snow1_swe_in"])
+    d["site"] = d["site"].astype(str).str.zfill(8)
+    d["date"] = pd.to_datetime(d["date"]).dt.strftime("%Y-%m-%d")
+    lut = {}
+    for r in d.itertuples():
+        swe = r.snow1_swe_in
+        lut[(r.site, r.date)] = (r.soil_sms_8in_pct, r.soil_temp_2in_degF,
+                                 swe if swe == swe else 0.0)
+    # merge fresh NRCS data from refresh_data.py if present (overrides Excel)
+    import pathlib
+    csv_path = pathlib.Path("data/nrcs_daily.csv")
+    if not csv_path.exists():
+        csv_path = pathlib.Path("/home/hatch/workspace/hydrotwin_colab/ghrepo/data/nrcs_daily.csv")
+    if csv_path.exists():
+        try:
+            df = pd.read_csv(csv_path, dtype={"site": str})
+            df["site"] = df["site"].str.zfill(8)
+            for r in df.itertuples():
+                swe = r.swe_in
+                lut[(r.site, r.date)] = (r.sms_pct, r.stmp_f,
+                                         swe if swe == swe else 0.0)
+        except Exception:
+            pass
+    _SOILSNOW_LUT = lut
+    return lut
+
+def prepare9():
+    """9-feature windows: 6 USGS (as in prepare) + soil_sms + soil_temp + swe.
+
+    Soil/snow are issue-date values broadcast across the 29-day window.
+    Missing soil -> per-site train median; missing swe -> 0.
+    Returns same dict as prepare() with X shaped (N,29,9) and stats extended:
+    stats[site] = {mu:[9], sd:[9], tsd:[7], med_sms, med_stmp} for live fallback.
+    """
+    import pandas as pd
+    P = prepare()  # 6-feature base, normalized
+    lut = load_soilsnow_lut()
+    n = len(P["X"])
+    sms = np.full(n, np.nan); stmp = np.full(n, np.nan); swe = np.zeros(n)
+    for i in range(n):
+        site = P["sites"][P["sid"][i]]
+        v = lut.get((site, P["issue"][i]))
+        if v:
+            sms[i], stmp[i], swe[i] = v[0], v[1], v[2]
+    # per-site normalization for the 3 new features (train split only)
+    X9 = np.zeros((n, 29, 9), dtype=np.float32)
+    X9[:, :, :6] = P["X"]
+    stats = {}
+    for si, site in enumerate(P["sites"]):
+        m = (P["sid"] == si)
+        tr = m & (P["split"] == "train")
+        med_sms = float(np.nanmedian(sms[tr])) if tr.sum() else 50.0
+        med_stmp = float(np.nanmedian(stmp[tr])) if tr.sum() else 60.0
+        s_sms = np.where(np.isnan(sms[m]), med_sms, sms[m])
+        s_stmp = np.where(np.isnan(stmp[m]), med_stmp, stmp[m])
+        s_swe = swe[m]
+        mu9 = np.array([s_sms[tr[m]].mean(), s_stmp[tr[m]].mean(), s_swe[tr[m]].mean()])
+        sd9 = np.array([s_sms[tr[m]].std(), s_stmp[tr[m]].std(), s_swe[tr[m]].std()]) + 1e-6
+        idx = np.where(m)[0]
+        for k, arr in enumerate([s_sms, s_stmp, s_swe]):
+            X9[idx[:, None], np.arange(29), 6 + k] = ((arr - mu9[k]) / sd9[k])[:, None]
+        st = P["stats"][site]
+        stats[site] = {"mu": st["mu"] + mu9.tolist(), "sd": st["sd"] + sd9.tolist(),
+                       "tsd": st["tsd"], "med_sms": med_sms, "med_stmp": med_stmp}
+    P["X"] = X9
+    P["stats"] = stats
+    P["n_feat"] = 9
+    return P
