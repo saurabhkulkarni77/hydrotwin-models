@@ -6,7 +6,7 @@ New terms (all soft penalties):
 4. frozen_soil: soil temp<32F -> infiltration blocked, rain=direct runoff
 5. snow_accum: tmean<0C + precip -> snow (not runoff), penalize predicted spikes
 """
-import sys, json, time
+import sys, json, time, os
 from pathlib import Path
 import numpy as np, pandas as pd, torch, torch.nn as nn
 
@@ -28,7 +28,7 @@ class PILSTMv2(nn.Module):
 
 def load_soil_snow(P):
     """Load soil/snow per window (issue date values)."""
-    d = pd.read_excel("/home/hatch/workspace/user/files/HydroTwin_NRCS_export.xlsx",
+    d = pd.read_excel(os.environ.get("HYDROTWIN_NRCS_XLSX", str(Path(__file__).resolve().parent / "data" / "nrcs_export.xlsx")),
                       sheet_name="Features+targets NRCS",
                       usecols=["site","date","soil_sms_8in_pct","soil_temp_2in_degF","snow1_swe_in"])
     d["site"] = d["site"].astype(str).str.zfill(8)

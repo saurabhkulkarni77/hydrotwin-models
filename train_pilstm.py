@@ -14,11 +14,11 @@ hydrological priors:
 Both are soft constraints (differentiable, ReLU-based).
 Usage: python3 train_pilstm.py [seed...]
 """
-import sys, json, time
+import sys, json, time, os
 from pathlib import Path
 import numpy as np, torch, torch.nn as nn
 
-PROJ = Path("/home/hatch/workspace/user/files/HydroTwin_10yr_Map")
+PROJ = Path(os.environ.get("HYDROTWIN_PROJ", Path(__file__).resolve().parent))
 RES = PROJ / "ml" / "results"
 torch.set_num_threads(1)
 
@@ -55,7 +55,7 @@ def physics_loss(pred_lf, precip_mm, last_lf):
 
 def main():
     seeds = [int(a) for a in sys.argv[1:]] or [0, 1]
-    sys.path.insert(0, "/home/hatch/workspace/hydrotwin_colab")
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
     from train_lstm_normal import prepare, val_loss, predict_logflow, rmse_log
     print("preparing data...", flush=True)
     P = prepare()
