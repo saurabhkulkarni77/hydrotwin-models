@@ -302,31 +302,45 @@ def train_gp(subset_n):
     return out_rmse
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--model", required=True,
-                    choices=["LSTM", "PILSTMv1", "PILSTMv2", "Transformer", "GP_Matern"])
-    ap.add_argument("--subset", type=int, required=True, choices=[6, 7, 8, 9])
-    a = ap.parse_args()
-    torch.set_num_threads(2)
-
-    if a.model == "GP_Matern":
-        rmse = train_gp(a.subset)
+def run_one(model, subset):
+    if model == "GP_Matern":
+        rmse = train_gp(subset)
     else:
-        rmse = train_neural(a.model, len(SUBSETS[a.subset]), SUBSETS[a.subset])
+        rmse = train_neural(model, len(SUBSETS[subset]), SUBSETS[subset])
 
     # merge into ablation_results.json
     if ABL.exists():
         abl = json.loads(ABL.read_text())
     else:
         abl = {}
-    key = f"{a.subset}feat"
-    abl.setdefault(key, {})[a.model] = rmse
+    key = f"{subset}feat"
+    abl.setdefault(key, {})[model] = rmse
     # mean
     vals = list(rmse.values())
-    abl[key][a.model + "_mean"] = round(float(np.mean(vals)), 4) if vals else None
+    abl[key][model + "_mean"] = round(float(np.mean(vals)), 4) if vals else None
     ABL.write_text(json.dumps(abl, indent=1))
-    print(f"ABLATION DONE: {a.model} subset {a.subset}, mean={np.mean(vals):.4f}")
+    print(f"ABLATION DONE: {model} subset {subset}, mean={np.mean(vals):.4f}")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model", required=False, default=None,
+                    choices=["LSTM", "PILSTMv1", "PILSTMv2", "Transformer", "GP_Matern"])
+    ap.add_argument("--subset", type=int, required=False, default=None, choices=[6, 7, 8, 9])
+    ap.add_argument("--all", action="store_true", help="run all model/subset combinations")
+    a = ap.parse_args()
+    torch.set_num_threads(2)
+
+    if a.all:
+        models = ["LSTM", "PILSTMv1", "PILSTMv2", "Transformer", "GP_Matern"]
+        for subset in [6, 7, 8, 9]:
+            for model in models:
+                print(f"=== ABLATION: {model} {subset}-feature ===", flush=True)
+                run_one(model, subset)
+    elif a.model and a.subset:
+        run_one(a.model, a.subset)
+    else:
+        ap.error("specify --model and --subset, or --all")
 
 
 if __name__ == "__main__":
