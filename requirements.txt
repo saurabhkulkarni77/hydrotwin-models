@@ -4,3 +4,4 @@ onnx
 scipy
 statsmodels
 onnxruntime
+openpyxl
