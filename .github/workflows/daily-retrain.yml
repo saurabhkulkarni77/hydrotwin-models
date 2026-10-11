@@ -31,7 +31,7 @@ jobs:
         env:
           HYDROTWIN_PROJ: .
 
-      - name: train neural models (9-feature: USGS + soil + snow)
+      - name: "train neural models (9-feature: USGS + soil + snow)"
         run: python train_export.py
         env:
           HYDROTWIN_NRCS_XLSX: ./data/nrcs_export.xlsx
