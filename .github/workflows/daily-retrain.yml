@@ -52,10 +52,6 @@ jobs:
         run: python train_ablation.py --all
         env:
           HYDROTWIN_NRCS_XLSX: ./data/nrcs_export.xlsx
-        env:
-          HYDROTWIN_PROJ: .
-          HYDROTWIN_PARAMS_OUT: ./params_out
-          HYDROTWIN_HYPER: ./classical_hyper.json
 
       - name: stage Pages content (preserve /onnx and /params URL prefixes)
         run: |
