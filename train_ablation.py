@@ -141,7 +141,11 @@ def train_neural(name, in_dim, subset_idx):
     prcp = np.concatenate(prcp); tm = np.concatenate(tm)
     sms, stmp, swe = load_soil_snow(P9)
 
-    res = json.loads((RES / "per_station_results_opt.json").read_text())
+    try:
+        res = json.loads((RES / "per_station_results_opt.json").read_text())
+    except FileNotFoundError:
+        res = {}
+        print("per_station_results_opt.json not found, using default lr 3e-3", flush=True)
 
     def make_model():
         if name == "LSTM":
@@ -160,8 +164,7 @@ def train_neural(name, in_dim, subset_idx):
         try:
             best_lr = res[key][site]["best_lr"]
         except (KeyError, TypeError):
-            print(f"{name} {site}: no best_lr, skip", flush=True)
-            continue
+            best_lr = 3e-3
         Ps = subset_station(P, si)
         if np.sum(Ps["split"] == "train") < 200:
             print(f"{name} {site}: too little train data, skip", flush=True)
@@ -254,7 +257,11 @@ def train_gp(subset_n):
     P9 = tln.prepare9()
     kidx = GP_SUBSETS[subset_n]
     # starting hypers from 9-feat refined
-    G = json.loads((RES / "gp_refined9.json").read_text())
+    try:
+        G = json.loads((RES / "gp_refined9.json").read_text())
+    except FileNotFoundError:
+        G = {}
+        print("gp_refined9.json not found, using default hypers", flush=True)
 
     out_rmse = {}
     for si, site in enumerate(P9["sites"]):
