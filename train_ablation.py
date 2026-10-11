@@ -22,15 +22,15 @@ import sys, json, time, os, argparse
 from pathlib import Path
 import numpy as np, torch, torch.nn as nn
 
-sys.path.insert(0, "/home/hatch/workspace/hydrotwin_colab")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 for v in ("HYDROTWIN_TRAIN_END", "HYDROTWIN_VAL_END", "HYDROTWIN_TEST_START"):
     os.environ.pop(v, None)
 
 import train_lstm_normal as tln
 
-PROJ = Path("/home/hatch/workspace/user/files/HydroTwin_10yr_Map")
+PROJ = Path(os.environ.get("HYDROTWIN_PROJ", Path(__file__).resolve().parent))
 RES = PROJ / "ml" / "results"
-ABL = Path("/home/hatch/workspace/hydrotwin_colab/ablation_results.json")
+ABL = PROJ / "ablation_results.json"
 
 SUBSETS = {
     6: [0, 1, 2, 3, 4, 5],

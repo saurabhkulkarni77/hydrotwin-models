@@ -21,9 +21,9 @@ import pandas as pd
 warnings.filterwarnings("ignore")
 
 HERE = Path(__file__).resolve().parent
-PROJ = Path(os.environ.get("HYDROTWIN_PROJ", "/home/hatch/workspace/user/files/HydroTwin_10yr_Map"))
+PROJ = Path(os.environ.get("HYDROTWIN_PROJ", Path(__file__).resolve().parent))
 DAILY = PROJ / "data" / "daily"
-OUT = Path(os.environ.get("HYDROTWIN_PARAMS_OUT", "/home/hatch/workspace/hydrotwin_colab/params_out"))
+OUT = Path(os.environ.get("HYDROTWIN_PARAMS_OUT", Path(__file__).resolve().parent / "params_out"))
 HYPER = Path(os.environ.get("HYDROTWIN_HYPER", HERE / "classical_hyper.json"))
 
 TRAIN_END = pd.Timestamp(os.environ.get("HYDROTWIN_TRAIN_END", "2023-09-30"))
