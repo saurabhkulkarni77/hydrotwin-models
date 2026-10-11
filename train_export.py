@@ -63,10 +63,10 @@ def main():
                 skipped += 1
                 continue
             try:
-                best_lr = res[name][site]["best_lr"]
-            except (KeyError, TypeError):
-                print(f"{name} {site}: no best_lr in results, skip", flush=True)
-                continue
+                v = res[name][site]
+                best_lr = v["best_lr"] if isinstance(v, dict) else float(v)
+            except (KeyError, TypeError, ValueError):
+                best_lr = 3e-3
             Ps = subset(P, si)
             if np.sum(Ps["split"] == "train") < 200:
                 print(f"{name} {site}: too little train data, skip", flush=True)
