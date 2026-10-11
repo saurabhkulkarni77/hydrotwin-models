@@ -11,7 +11,7 @@ import sys, json, time, os
 from pathlib import Path
 import numpy as np, pandas as pd, torch, torch.nn as nn
 
-PROJ = Path("/home/hatch/workspace/user/files/HydroTwin_10yr_Map")
+PROJ = Path(os.environ.get("HYDROTWIN_PROJ", Path(__file__).resolve().parent))
 DAILY = PROJ / "data" / "daily"
 RES = PROJ / "ml" / "results"
 DAYS = pd.date_range("2016-10-01", "2026-09-30", freq="D")
