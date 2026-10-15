@@ -61,7 +61,11 @@ def fetch_awdb(triplets, elements, duration, d1, d2):
     for s in data:
         trip = (s.get("stationTriplet") or "")
         for dd in (s.get("data") or []):
-            code = (dd.get("stationElement") or {}).get("elementCode")
+            se = dd.get("stationElement") or {}
+            code = se.get("elementCode")
+            hd = se.get("heightDepth")
+            if hd is not None:
+                code = f"{code}:{hd}"  # depth-aware key: 'SMS:-8', 'STO:-2', ...
             for v in (dd.get("values") or []):
                 if v.get("value") is None:
                     continue
