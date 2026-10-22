@@ -87,7 +87,8 @@ def run_study(station, family, trials, max_epochs, proj, storage_path):
         sampler=optuna.samplers.TPESampler(seed=SEED, n_startup_trials=5),
         storage=study_storage(study), study_name=study,
         points_to_evaluate=[inc])
-    scheduler = ASHAScheduler(max_t=max_epochs, grace_period=4,
+    scheduler = ASHAScheduler(metric="rmse", mode="min",
+                              max_t=max_epochs, grace_period=4,
                               reduction_factor=2)
     trainable = functools.partial(tune_trainable, station=station,
                                   family=family, proj=str(proj),
@@ -95,7 +96,8 @@ def run_study(station, family, trials, max_epochs, proj, storage_path):
     init_ray(proj)
     tuner = tune.Tuner(
         trainable,
-        tune_config=tune.TuneConfig(num_samples=trials,
+        tune_config=tune.TuneConfig(metric="rmse", mode="min",
+                                    num_samples=trials,
                                     max_concurrent_trials=2,
                                     search_alg=algo, scheduler=scheduler),
         run_config=tune.RunConfig(
