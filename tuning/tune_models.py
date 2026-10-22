@@ -96,8 +96,7 @@ def run_study(station, family, trials, max_epochs, proj, storage_path):
     init_ray(proj)
     tuner = tune.Tuner(
         trainable,
-        tune_config=tune.TuneConfig(metric="rmse", mode="min",
-                                    num_samples=trials,
+        tune_config=tune.TuneConfig(num_samples=trials,
                                     max_concurrent_trials=2,
                                     search_alg=algo, scheduler=scheduler),
         run_config=tune.RunConfig(
