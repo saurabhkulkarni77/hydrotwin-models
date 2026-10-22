@@ -1,0 +1,4 @@
+# Tuning stack (on top of ../requirements.txt + CPU torch).
+# Installed separately so the weekly retrain image stays lean.
+ray[tune]>=2.9
+optuna>=3.6
