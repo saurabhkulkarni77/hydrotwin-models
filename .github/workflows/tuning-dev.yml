@@ -23,13 +23,16 @@ on:
         default: '12'
   push:
     branches: [dev]
+    # NOTE: paths + paths-ignore cannot be combined in one trigger,
+    # so the filter names the CODE files only. The bot's result
+    # commits touch registry/, studies/, dev_weights/ — none match,
+    # so the workflow cannot retrigger itself (the job-level
+    # 'tuning-bot:' message guard is a second lock).
     paths:
-      - 'tuning/**'
+      - 'tuning/*.py'
+      - 'tuning/*.md'
+      - 'tuning/*.txt'
       - '.github/workflows/tuning-dev.yml'
-    paths-ignore:
-      - 'tuning/registry/**'
-      - 'tuning/studies/**'
-      - 'tuning/dev_weights/**'
 
 jobs:
   tune-and-gate:
