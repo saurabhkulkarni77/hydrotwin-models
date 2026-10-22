@@ -1,0 +1,4 @@
+# Ray Tune experiment dirs and caches stay local; the committable
+# source of truth is the Optuna journal (studies/*.journal) + registry.
+local_runs/
+__pycache__/
