@@ -1,0 +1,31 @@
+{
+ "schema": 1,
+ "generated_at": "2026-10-23T00:40:21Z",
+ "running": false,
+ "current": null,
+ "stations": {
+  "08057000": {
+   "LSTM": {
+    "verdict": "PASS",
+    "margin_pct": 1.21,
+    "candidate_rmse": 0.3057,
+    "incumbent_rmse": 0.3094,
+    "trials": 12,
+    "best_val_rmse": 0.311,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T00:15:21Z"
+   },
+   "Transformer": {
+    "verdict": "FAIL",
+    "margin_pct": -1.15,
+    "candidate_rmse": 0.3034,
+    "incumbent_rmse": 0.3,
+    "trials": 12,
+    "best_val_rmse": 0.3119,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T00:21:43Z"
+   }
+  }
+ },
+ "source": "hydrotwin-models tuning/registry (dev branch), published by tuning/write_status.py"
+}
