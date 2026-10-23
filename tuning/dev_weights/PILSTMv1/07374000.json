@@ -1,0 +1,29 @@
+{
+ "station": "07374000",
+ "family": "PILSTMv1",
+ "params": {
+  "batch": 256,
+  "dropout": 0.13684509966496455,
+  "hidden": 16,
+  "lambda_phys": 0.09241707704121681,
+  "layers": 2,
+  "lr": 0.0046263628414755864,
+  "wd": 0.00021600820741402046,
+  "window": 21
+ },
+ "gate": {
+  "date": "2026-10-23T20:13:18Z",
+  "holdout": "WY2026 (first-forecast 2025-10-01..2026-09-30), RMSE log10(cfs)",
+  "protocol": "train span <= 2025-09-30, early stop Apr-Sep 2025",
+  "n_holdout_windows_incumbent": 290,
+  "n_holdout_windows_candidate": 306,
+  "incumbent_rmse": 0.059,
+  "candidate_rmse": 0.056,
+  "margin": 0.0031,
+  "margin_pct": 5.17,
+  "incumbent_epochs": 22,
+  "candidate_epochs": 19,
+  "verdict": "PASS",
+  "published_protocol_B_reference_rmse": null
+ }
+}
