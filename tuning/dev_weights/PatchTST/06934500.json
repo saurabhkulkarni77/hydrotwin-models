@@ -1,0 +1,29 @@
+{
+ "station": "06934500",
+ "family": "PatchTST",
+ "params": {
+  "batch": 512,
+  "d_heads": "64_4",
+  "dropout": 0.28973821467701877,
+  "layers": 2,
+  "lr": 0.002026608556218174,
+  "patch": 7,
+  "wd": 0.0006223472803174195,
+  "window": 14
+ },
+ "gate": {
+  "date": "2026-10-23T19:42:50Z",
+  "holdout": "WY2026 (first-forecast 2025-10-01..2026-09-30), RMSE log10(cfs)",
+  "protocol": "train span <= 2025-09-30, early stop Apr-Sep 2025",
+  "n_holdout_windows_incumbent": 306,
+  "n_holdout_windows_candidate": 336,
+  "incumbent_rmse": 0.1029,
+  "candidate_rmse": 0.0998,
+  "margin": 0.0031,
+  "margin_pct": 3.01,
+  "incumbent_epochs": 12,
+  "candidate_epochs": 16,
+  "verdict": "PASS",
+  "published_protocol_B_reference_rmse": null
+ }
+}
