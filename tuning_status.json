@@ -1,21 +1,8 @@
 {
  "schema": 1,
- "generated_at": "2026-10-23T22:17:26Z",
- "running": true,
- "current": {
-  "station": "11447650",
-  "families": [
-   "LSTM",
-   "Transformer",
-   "TFT",
-   "PatchTST",
-   "PILSTMv1",
-   "GP"
-  ],
-  "since": "2026-10-23T22:17:26Z",
-  "workflow": "tuning-dev",
-  "run_url": "https://github.com/saurabhkulkarni77/hydrotwin-models/actions/runs/40032519691"
- },
+ "generated_at": "2026-10-23T22:47:04Z",
+ "running": false,
+ "current": null,
  "stations": {
   "01463500": {
    "GP": {
@@ -762,25 +749,65 @@
    }
   },
   "11447650": {
-   "LSTM": {
+   "GP": {
     "verdict": "PASS",
-    "margin_pct": 3.83,
-    "candidate_rmse": 0.0894,
-    "incumbent_rmse": 0.093,
+    "margin_pct": 7.86,
+    "candidate_rmse": 0.0932,
+    "incumbent_rmse": 0.1012,
     "trials": 12,
-    "best_val_rmse": 0.097,
+    "best_val_rmse": 0.0955,
     "holdout": "WY2026",
-    "updated": "2026-10-23T06:41:46Z"
+    "updated": "2026-10-23T22:47:02Z"
+   },
+   "LSTM": {
+    "verdict": "FAIL",
+    "margin_pct": -12.88,
+    "candidate_rmse": 0.105,
+    "incumbent_rmse": 0.093,
+    "trials": 24,
+    "best_val_rmse": 0.0955,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T22:22:09Z"
+   },
+   "PILSTMv1": {
+    "verdict": "FAIL",
+    "margin_pct": 0.0,
+    "candidate_rmse": 0.0926,
+    "incumbent_rmse": 0.0926,
+    "trials": 12,
+    "best_val_rmse": 0.0983,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T22:42:40Z"
+   },
+   "PatchTST": {
+    "verdict": "FAIL",
+    "margin_pct": -4.47,
+    "candidate_rmse": 0.111,
+    "incumbent_rmse": 0.1063,
+    "trials": 12,
+    "best_val_rmse": 0.0918,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T22:38:02Z"
+   },
+   "TFT": {
+    "verdict": "FAIL",
+    "margin_pct": -5.22,
+    "candidate_rmse": 0.0983,
+    "incumbent_rmse": 0.0934,
+    "trials": 12,
+    "best_val_rmse": 0.0939,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T22:33:23Z"
    },
    "Transformer": {
     "verdict": "PASS",
-    "margin_pct": 7.73,
-    "candidate_rmse": 0.0872,
+    "margin_pct": 7.33,
+    "candidate_rmse": 0.0875,
     "incumbent_rmse": 0.0945,
-    "trials": 12,
-    "best_val_rmse": 0.0942,
+    "trials": 24,
+    "best_val_rmse": 0.0938,
     "holdout": "WY2026",
-    "updated": "2026-10-23T06:47:10Z"
+    "updated": "2026-10-23T22:27:44Z"
    }
   },
   "14105700": {
