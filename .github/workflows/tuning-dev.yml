@@ -44,7 +44,7 @@ jobs:
     env:
       HYDROTWIN_PROJ: ${{ github.workspace }}
       HYDROTWIN_NRCS_XLSX: ${{ github.workspace }}/data/nrcs_export.xlsx
-      STATION: ${{ inputs.station || '08057000' }}
+      STATION: ${{ inputs.station || vars.TUNING_STATION || '08057000' }}
       TRIALS: ${{ inputs.trials || '12' }}
     steps:
       - uses: actions/checkout@v4
