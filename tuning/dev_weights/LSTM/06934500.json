@@ -1,0 +1,28 @@
+{
+ "station": "06934500",
+ "family": "LSTM",
+ "params": {
+  "batch": 128,
+  "dropout": 0.008087358976130289,
+  "hidden": 64,
+  "layers": 1,
+  "lr": 0.0012520653814999472,
+  "wd": 0.0001398196140899405,
+  "window": 45
+ },
+ "gate": {
+  "date": "2026-10-23T05:47:23Z",
+  "holdout": "WY2026 (first-forecast 2025-10-01..2026-09-30), RMSE log10(cfs)",
+  "protocol": "train span <= 2025-09-30, early stop Apr-Sep 2025",
+  "n_holdout_windows_incumbent": 306,
+  "n_holdout_windows_candidate": 274,
+  "incumbent_rmse": 0.0936,
+  "candidate_rmse": 0.0914,
+  "margin": 0.0023,
+  "margin_pct": 2.42,
+  "incumbent_epochs": 16,
+  "candidate_epochs": 15,
+  "verdict": "PASS",
+  "published_protocol_B_reference_rmse": null
+ }
+}
