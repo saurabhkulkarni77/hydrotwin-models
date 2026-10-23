@@ -3,25 +3,25 @@
  "family": "LSTM",
  "params": {
   "batch": 256,
-  "dropout": 0.2273735795474594,
-  "hidden": 16,
-  "layers": 2,
-  "lr": 0.0046263628414755864,
-  "wd": 0.00021600820741402046,
-  "window": 21
+  "dropout": 0.22238869040388254,
+  "hidden": 96,
+  "layers": 1,
+  "lr": 0.009441801009876804,
+  "wd": 0.00015434581969556158,
+  "window": 29
  },
  "gate": {
-  "date": "2026-10-23T00:15:21Z",
+  "date": "2026-10-23T15:04:37Z",
   "holdout": "WY2026 (first-forecast 2025-10-01..2026-09-30), RMSE log10(cfs)",
   "protocol": "train span <= 2025-09-30, early stop Apr-Sep 2025",
   "n_holdout_windows_incumbent": 336,
-  "n_holdout_windows_candidate": 344,
+  "n_holdout_windows_candidate": 336,
   "incumbent_rmse": 0.3094,
-  "candidate_rmse": 0.3057,
-  "margin": 0.0038,
-  "margin_pct": 1.21,
+  "candidate_rmse": 0.3083,
+  "margin": 0.0011,
+  "margin_pct": 0.36,
   "incumbent_epochs": 60,
-  "candidate_epochs": 28,
+  "candidate_epochs": 10,
   "verdict": "PASS",
   "published_protocol_B_reference_rmse": 0.7012
  }
