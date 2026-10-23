@@ -4,24 +4,24 @@
  "params": {
   "batch": 256,
   "d_heads": "48_2",
-  "dropout": 0.2858247034550955,
+  "dropout": 0.23404385152003374,
   "layers": 1,
-  "lr": 0.0014187079131473244,
-  "wd": 0.0006136045802294309,
+  "lr": 0.0026743494168848686,
+  "wd": 0.00011857885414596182,
   "window": 14
  },
  "gate": {
-  "date": "2026-10-23T06:21:19Z",
+  "date": "2026-10-23T21:27:03Z",
   "holdout": "WY2026 (first-forecast 2025-10-01..2026-09-30), RMSE log10(cfs)",
   "protocol": "train span <= 2025-09-30, early stop Apr-Sep 2025",
   "n_holdout_windows_incumbent": 312,
   "n_holdout_windows_candidate": 336,
   "incumbent_rmse": 0.1446,
-  "candidate_rmse": 0.1388,
-  "margin": 0.0058,
-  "margin_pct": 4.02,
+  "candidate_rmse": 0.1399,
+  "margin": 0.0047,
+  "margin_pct": 3.22,
   "incumbent_epochs": 60,
-  "candidate_epochs": 17,
+  "candidate_epochs": 9,
   "verdict": "PASS",
   "published_protocol_B_reference_rmse": null
  }
