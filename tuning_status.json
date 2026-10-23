@@ -1,21 +1,8 @@
 {
  "schema": 1,
- "generated_at": "2026-10-23T18:38:16Z",
- "running": true,
- "current": {
-  "station": "06214500",
-  "families": [
-   "LSTM",
-   "Transformer",
-   "TFT",
-   "PatchTST",
-   "PILSTMv1",
-   "GP"
-  ],
-  "since": "2026-10-23T18:38:16Z",
-  "workflow": "tuning-dev",
-  "run_url": "https://github.com/saurabhkulkarni77/hydrotwin-models/actions/runs/40004810916"
- },
+ "generated_at": "2026-10-23T19:01:12Z",
+ "running": false,
+ "current": null,
  "stations": {
   "01463500": {
    "GP": {
@@ -328,25 +315,65 @@
    }
   },
   "06214500": {
+   "GP": {
+    "verdict": "PASS",
+    "margin_pct": 7.17,
+    "candidate_rmse": 0.0809,
+    "incumbent_rmse": 0.0871,
+    "trials": 12,
+    "best_val_rmse": 0.0711,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T19:01:09Z"
+   },
    "LSTM": {
     "verdict": "FAIL",
-    "margin_pct": -3.04,
-    "candidate_rmse": 0.0752,
+    "margin_pct": -2.18,
+    "candidate_rmse": 0.0746,
     "incumbent_rmse": 0.073,
-    "trials": 12,
-    "best_val_rmse": 0.0722,
+    "trials": 24,
+    "best_val_rmse": 0.0678,
     "holdout": "WY2026",
-    "updated": "2026-10-23T05:38:14Z"
+    "updated": "2026-10-23T18:41:45Z"
    },
-   "Transformer": {
+   "PILSTMv1": {
     "verdict": "FAIL",
-    "margin_pct": 0.0,
-    "candidate_rmse": 0.0767,
-    "incumbent_rmse": 0.0767,
+    "margin_pct": -1.01,
+    "candidate_rmse": 0.0726,
+    "incumbent_rmse": 0.0719,
+    "trials": 12,
+    "best_val_rmse": 0.0657,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T18:57:52Z"
+   },
+   "PatchTST": {
+    "verdict": "PASS",
+    "margin_pct": 1.3,
+    "candidate_rmse": 0.0743,
+    "incumbent_rmse": 0.0753,
     "trials": 12,
     "best_val_rmse": 0.0719,
     "holdout": "WY2026",
-    "updated": "2026-10-23T05:42:19Z"
+    "updated": "2026-10-23T18:54:18Z"
+   },
+   "TFT": {
+    "verdict": "FAIL",
+    "margin_pct": 0.0,
+    "candidate_rmse": 0.0768,
+    "incumbent_rmse": 0.0768,
+    "trials": 12,
+    "best_val_rmse": 0.0696,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T18:50:46Z"
+   },
+   "Transformer": {
+    "verdict": "PASS",
+    "margin_pct": 4.7,
+    "candidate_rmse": 0.0731,
+    "incumbent_rmse": 0.0767,
+    "trials": 24,
+    "best_val_rmse": 0.0708,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T18:45:47Z"
    }
   },
   "06934500": {
