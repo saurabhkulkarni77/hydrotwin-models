@@ -1,0 +1,50 @@
+{
+ "schema": 1,
+ "station": "01463500",
+ "family": "Transformer",
+ "history": [
+  {
+   "run_id": "20261023T045442Z",
+   "study": "hydrotwin-01463500-transformer",
+   "trials": 12,
+   "seed": 0,
+   "objective": "val RMSE log10(cfs), WY2025, tune fold (train <= 2024-09-30)",
+   "best_params": {
+    "batch": 256,
+    "d_heads": "16_2",
+    "dropout": 0.0,
+    "layers": 1,
+    "lr": 0.003,
+    "wd": 1e-05,
+    "window": 29
+   },
+   "best_val_rmse_log10": 0.1596,
+   "incumbent_params": {
+    "lr": 0.003,
+    "wd": 1e-05,
+    "batch": 256,
+    "window": 29,
+    "layers": 1,
+    "dropout": 0.0,
+    "d_heads": "16_2"
+   },
+   "incumbent_val_rmse_log10": 0.15962741986098852,
+   "gate": {
+    "date": "2026-10-23T04:55:11Z",
+    "holdout": "WY2026 (first-forecast 2025-10-01..2026-09-30), RMSE log10(cfs)",
+    "protocol": "train span <= 2025-09-30, early stop Apr-Sep 2025",
+    "n_holdout_windows_incumbent": 327,
+    "n_holdout_windows_candidate": 327,
+    "incumbent_rmse": 0.1422,
+    "candidate_rmse": 0.1422,
+    "margin": 0.0,
+    "margin_pct": 0.0,
+    "incumbent_epochs": 18,
+    "candidate_epochs": 18,
+    "verdict": "FAIL",
+    "published_protocol_B_reference_rmse": null
+   }
+  }
+ ],
+ "updated": "2026-10-23T04:55:11Z"
+}
