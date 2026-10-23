@@ -1,8 +1,17 @@
 {
  "schema": 1,
- "generated_at": "2026-10-23T06:21:21Z",
- "running": false,
- "current": null,
+ "generated_at": "2026-10-23T06:23:26Z",
+ "running": true,
+ "current": {
+  "station": "09380000",
+  "families": [
+   "LSTM",
+   "Transformer"
+  ],
+  "since": "2026-10-23T06:23:26Z",
+  "workflow": "tuning-dev",
+  "run_url": "https://github.com/saurabhkulkarni77/hydrotwin-models/actions/runs/39911081732"
+ },
  "stations": {
   "01463500": {
    "LSTM": {
