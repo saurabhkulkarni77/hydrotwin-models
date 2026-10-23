@@ -1,8 +1,21 @@
 {
  "schema": 1,
- "generated_at": "2026-10-23T22:15:15Z",
- "running": false,
- "current": null,
+ "generated_at": "2026-10-23T22:17:26Z",
+ "running": true,
+ "current": {
+  "station": "11447650",
+  "families": [
+   "LSTM",
+   "Transformer",
+   "TFT",
+   "PatchTST",
+   "PILSTMv1",
+   "GP"
+  ],
+  "since": "2026-10-23T22:17:26Z",
+  "workflow": "tuning-dev",
+  "run_url": "https://github.com/saurabhkulkarni77/hydrotwin-models/actions/runs/40032519691"
+ },
  "stations": {
   "01463500": {
    "GP": {
