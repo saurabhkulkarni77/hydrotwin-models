@@ -1,0 +1,142 @@
+name: tuning-dev
+
+# Optuna + Ray Tune hyperparameter tuning with an ENFORCED quality
+# gate — DEV BRANCH ONLY. A candidate that does not beat the incumbent
+# on the untouched WY2026 holdout fails this job and never overwrites
+# dev weights (tuning/dev_weights/). Production is never touched:
+# this workflow exists only on the dev branch and writes only to it.
+#
+# Triggers: manual dispatch (needs this file on the default branch —
+# a GitHub rule) OR a push to dev touching tuning/** (push workflows
+# run from the pushed branch, so this is the working trigger today).
+# The bot's own result commits are excluded via paths-ignore + the
+# job-level message guard, so the workflow cannot retrigger itself.
+
+on:
+  workflow_dispatch:
+    inputs:
+      station:
+        description: 'USGS station id'
+        default: '08057000'
+      trials:
+        description: 'Max tuning trials per family'
+        default: '12'
+  push:
+    branches: [dev]
+    # NOTE: paths + paths-ignore cannot be combined in one trigger,
+    # so the filter names the CODE files only. The bot's result
+    # commits touch registry/, studies/, dev_weights/ — none match,
+    # so the workflow cannot retrigger itself (the job-level
+    # 'tuning-bot:' message guard is a second lock).
+    paths:
+      - 'tuning/*.py'
+      - 'tuning/*.md'
+      - 'tuning/*.txt'
+      - '.github/workflows/tuning-dev.yml'
+
+jobs:
+  tune-and-gate:
+    if: ${{ !contains(github.event.head_commit.message, 'tuning-bot:') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    permissions:
+      contents: write
+    env:
+      HYDROTWIN_PROJ: ${{ github.workspace }}
+      HYDROTWIN_NRCS_XLSX: ${{ github.workspace }}/data/nrcs_export.xlsx
+      STATION: ${{ inputs.station || vars.TUNING_STATION || '08057000' }}
+      TRIALS: ${{ inputs.trials || '12' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: install torch (CPU)
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: install deps
+        run: |
+          pip install -r requirements.txt
+          pip install -r tuning/requirements-tuning.txt
+
+      # Public tuning status for the station pages' Optuna + Ray Tune
+      # badge (tuning_status.json on the gh-pages/Pages branch). Both
+      # publish steps are continue-on-error: a status failure must
+      # never fail tuning. NOTE: the weekly daily-retrain publish
+      # replaces the gh-pages tree and drops this file; the next
+      # tuning-dev run republishes it (the badge degrades gracefully
+      # to a neutral idle label while the file is absent).
+      - name: publish tuning status (RUNNING) to GitHub Pages
+        continue-on-error: true
+        run: |
+          python tuning/write_status.py --running "$STATION" \
+            --families "LSTM,Transformer" \
+            --out "$RUNNER_TEMP/tuning_status.json"
+          rm -rf "$RUNNER_TEMP/pages_pub"
+          git clone --quiet --depth 1 --branch gh-pages \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            "$RUNNER_TEMP/pages_pub"
+          cp "$RUNNER_TEMP/tuning_status.json" \
+            "$RUNNER_TEMP/pages_pub/tuning_status.json"
+          cd "$RUNNER_TEMP/pages_pub"
+          git config user.name "tuning-bot"
+          git config user.email "actions@github.com"
+          git add tuning_status.json
+          git commit -m "tuning-bot: tuning status RUNNING $STATION" \
+            || echo "status unchanged"
+          git push origin gh-pages
+
+      - name: tune LSTM (Optuna + Ray Tune, persistent study journal)
+        run: python tuning/tune_models.py --station $STATION --family LSTM --trials $TRIALS
+
+      - name: quality gate LSTM (enforced)
+        id: gate_lstm
+        continue-on-error: true
+        run: python tuning/gate.py --station $STATION --family LSTM
+
+      - name: tune Transformer
+        run: python tuning/tune_models.py --station $STATION --family Transformer --trials $TRIALS
+
+      - name: quality gate Transformer (enforced)
+        id: gate_tr
+        continue-on-error: true
+        run: python tuning/gate.py --station $STATION --family Transformer
+
+      - name: commit registry + study journals (+ dev weights on PASS only)
+        if: always()
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add tuning/registry tuning/studies tuning/dev_weights 2>/dev/null || true
+          git commit -m "tuning-bot: $STATION results + gate verdicts" || true
+          git push origin dev
+
+      - name: enforce gate outcomes
+        if: steps.gate_lstm.outcome == 'failure' || steps.gate_tr.outcome == 'failure'
+        run: |
+          echo "::error::Quality gate FAILED for at least one family — losing candidates were NOT promoted; dev weights unchanged for them. See registry verdicts."
+          exit 1
+
+      - name: publish tuning status (idle, latest results) to GitHub Pages
+        if: always()
+        continue-on-error: true
+        run: |
+          python tuning/write_status.py \
+            --out "$RUNNER_TEMP/tuning_status.json"
+          rm -rf "$RUNNER_TEMP/pages_pub"
+          git clone --quiet --depth 1 --branch gh-pages \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            "$RUNNER_TEMP/pages_pub"
+          cp "$RUNNER_TEMP/tuning_status.json" \
+            "$RUNNER_TEMP/pages_pub/tuning_status.json"
+          cd "$RUNNER_TEMP/pages_pub"
+          git config user.name "tuning-bot"
+          git config user.email "actions@github.com"
+          git add tuning_status.json
+          git commit -m "tuning-bot: tuning status idle (latest registry results)" \
+            || echo "status unchanged"
+          git push origin gh-pages
