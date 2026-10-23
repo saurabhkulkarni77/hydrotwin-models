@@ -63,6 +63,33 @@ jobs:
           pip install -r requirements.txt
           pip install -r tuning/requirements-tuning.txt
 
+      # Public tuning status for the station pages' Optuna + Ray Tune
+      # badge (tuning_status.json on the gh-pages/Pages branch). Both
+      # publish steps are continue-on-error: a status failure must
+      # never fail tuning. NOTE: the weekly daily-retrain publish
+      # replaces the gh-pages tree and drops this file; the next
+      # tuning-dev run republishes it (the badge degrades gracefully
+      # to a neutral idle label while the file is absent).
+      - name: publish tuning status (RUNNING) to GitHub Pages
+        continue-on-error: true
+        run: |
+          python tuning/write_status.py --running "$STATION" \
+            --families "LSTM,Transformer" \
+            --out "$RUNNER_TEMP/tuning_status.json"
+          rm -rf "$RUNNER_TEMP/pages_pub"
+          git clone --quiet --depth 1 --branch gh-pages \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            "$RUNNER_TEMP/pages_pub"
+          cp "$RUNNER_TEMP/tuning_status.json" \
+            "$RUNNER_TEMP/pages_pub/tuning_status.json"
+          cd "$RUNNER_TEMP/pages_pub"
+          git config user.name "tuning-bot"
+          git config user.email "actions@github.com"
+          git add tuning_status.json
+          git commit -m "tuning-bot: tuning status RUNNING $STATION" \
+            || echo "status unchanged"
+          git push origin gh-pages
+
       - name: tune LSTM (Optuna + Ray Tune, persistent study journal)
         run: python tuning/tune_models.py --station $STATION --family LSTM --trials $TRIALS
 
@@ -93,3 +120,23 @@ jobs:
         run: |
           echo "::error::Quality gate FAILED for at least one family — losing candidates were NOT promoted; dev weights unchanged for them. See registry verdicts."
           exit 1
+
+      - name: publish tuning status (idle, latest results) to GitHub Pages
+        if: always()
+        continue-on-error: true
+        run: |
+          python tuning/write_status.py \
+            --out "$RUNNER_TEMP/tuning_status.json"
+          rm -rf "$RUNNER_TEMP/pages_pub"
+          git clone --quiet --depth 1 --branch gh-pages \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            "$RUNNER_TEMP/pages_pub"
+          cp "$RUNNER_TEMP/tuning_status.json" \
+            "$RUNNER_TEMP/pages_pub/tuning_status.json"
+          cd "$RUNNER_TEMP/pages_pub"
+          git config user.name "tuning-bot"
+          git config user.email "actions@github.com"
+          git add tuning_status.json
+          git commit -m "tuning-bot: tuning status idle (latest registry results)" \
+            || echo "status unchanged"
+          git push origin gh-pages
