@@ -1,0 +1,28 @@
+{
+ "station": "09380000",
+ "family": "Transformer",
+ "params": {
+  "batch": 256,
+  "d_heads": "32_4",
+  "dropout": 0.2556138941359682,
+  "layers": 1,
+  "lr": 0.0015920469789175243,
+  "wd": 4.924295005709708e-05,
+  "window": 45
+ },
+ "gate": {
+  "date": "2026-10-23T21:52:54Z",
+  "holdout": "WY2026 (first-forecast 2025-10-01..2026-09-30), RMSE log10(cfs)",
+  "protocol": "train span <= 2025-09-30, early stop Apr-Sep 2025",
+  "n_holdout_windows_incumbent": 328,
+  "n_holdout_windows_candidate": 312,
+  "incumbent_rmse": 0.0285,
+  "candidate_rmse": 0.0263,
+  "margin": 0.0022,
+  "margin_pct": 7.61,
+  "incumbent_epochs": 8,
+  "candidate_epochs": 22,
+  "verdict": "PASS",
+  "published_protocol_B_reference_rmse": null
+ }
+}
