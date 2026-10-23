@@ -84,3 +84,34 @@ jobs:
           git add data/daily data/nrcs_daily.csv
           git commit -m "daily data refresh $(date +%F)" || true
           git push
+
+      # Restore tuning_status.json on GitHub Pages: the publish above
+      # replaces the whole gh-pages tree and drops the file the station
+      # pages' Optuna + Ray Tune badge polls. Regenerate it from the
+      # dev branch's tuning registry (tuning/write_status.py) and
+      # commit it to gh-pages, reusing the clone/commit/push pattern of
+      # tuning-dev.yml's status steps. if: always() +
+      # continue-on-error: this step can never fail the retrain, and
+      # it does not touch training, weights, or the publish itself.
+      - name: restore tuning status on GitHub Pages (badge self-heal)
+        if: always()
+        continue-on-error: true
+        run: |
+          rm -rf "$RUNNER_TEMP/tuning_src" "$RUNNER_TEMP/pages_pub"
+          git clone --quiet --depth 1 --branch dev \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            "$RUNNER_TEMP/tuning_src"
+          python3 "$RUNNER_TEMP/tuning_src/tuning/write_status.py" \
+            --out "$RUNNER_TEMP/tuning_status.json"
+          git clone --quiet --depth 1 --branch gh-pages \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            "$RUNNER_TEMP/pages_pub"
+          cp "$RUNNER_TEMP/tuning_status.json" \
+            "$RUNNER_TEMP/pages_pub/tuning_status.json"
+          cd "$RUNNER_TEMP/pages_pub"
+          git config user.name "tuning-bot"
+          git config user.email "actions@github.com"
+          git add tuning_status.json
+          git commit -m "tuning-bot: tuning status restored after weekly retrain publish" \
+            || echo "status unchanged"
+          git push origin gh-pages
