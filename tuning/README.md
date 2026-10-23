@@ -74,3 +74,5 @@ path; the identical code runs unchanged in both places.
 <!-- tuning batch trigger: station 01646500 (drift PSI > 0.25 batch, Oct 22-23 2026) -->
 
 <!-- tuning batch trigger: station 02320500 (drift PSI > 0.25 batch, Oct 22-23 2026) -->
+
+<!-- tuning batch trigger: station 05331000 (drift PSI > 0.25 batch, Oct 22-23 2026) -->
