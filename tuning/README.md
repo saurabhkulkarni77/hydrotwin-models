@@ -70,3 +70,5 @@ the agent VM's runtime intercepts non-loopback TCP, so `ray.init()`
 cannot complete there (verified Oct 22, 2026 — GCS dials the host IP
 and times out). That is why the Actions workflow is the execution
 path; the identical code runs unchanged in both places.
+
+<!-- tuning batch trigger: station 01646500 (drift PSI > 0.25 batch, Oct 22-23 2026) -->
