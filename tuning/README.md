@@ -102,3 +102,5 @@ path; the identical code runs unchanged in both places.
 <!-- tuning batch trigger: station 01463500 (all-models expansion sweep, Oct 23 2026) -->
 
 <!-- tuning batch trigger: station 01646500 (all-models expansion sweep, Oct 23 2026) -->
+
+<!-- tuning batch trigger: station 02320500 (all-models expansion sweep, Oct 23 2026) -->
