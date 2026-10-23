@@ -55,6 +55,23 @@ def _windows(d, W):
             pd.Series(pd.to_datetime(ft)))
 
 
+def _gp_features(X9raw):
+    """The 11 GP kernel features of refine_gp.features() /
+    train_ablation.kfeatures(), verbatim: 8 summary stats of the RAW
+    (unstandardized) window + the raw soil/snow issue-date values that
+    ride in channels 6-8. X9raw: (N, W, 9) raw daily values with the
+    soil/snow channels broadcast across the window, exactly as
+    refine_gp.py builds them."""
+    lf = np.log(X9raw[:, :, 4])
+    rain = X9raw[:, :, 3]
+    tm = X9raw[:, :, 2]
+    base = np.stack([lf[:, -1], lf[:, -1] - lf[:, -2],
+                     lf[:, -1] - lf[:, -8], rain[:, -1],
+                     rain[:, -3:].sum(1), rain[:, -7:].sum(1),
+                     rain.sum(1), tm[:, -7:].mean(1)], 1)
+    return np.concatenate([base, X9raw[:, -1, 6:9]], 1)
+
+
 def build_station_P(site, window, fold, proj=None):
     """Return a prepare()-shaped dict for one station and fold."""
     key = (site, window, fold, str(proj))
@@ -66,6 +83,7 @@ def build_station_P(site, window, fold, proj=None):
                     parse_dates=["date"])
     X, Y, issue, ft = _windows(d, window)
     X = X.copy()
+    raw6 = X.copy()  # raw daily values (ch 4 = flow_cfs) for gpF/precip
     X[:, :, 4] = np.log(X[:, :, 4])
     last = X[:, -1, 4]
     T = Y - last[:, None]
@@ -114,7 +132,22 @@ def build_station_P(site, window, fold, proj=None):
         X9[:, :, 6 + k] = (((arr - mu9[k]) / sd9[k]).astype(np.float32)
                            [:, None] * np.ones((1, window), dtype=np.float32))
 
+    # Raw-window extras for the non-standard families:
+    # - gpF: the 11 GP kernel features (refine_gp.features) computed on
+    #   RAW windows with RAW soil/snow broadcast, as production builds.
+    # - precip: issue-date precip_mm (raw), the PILSTMv1 physics input
+    #   (train_pilstm.py rebuilds exactly this map from the daily CSV).
+    raw9 = np.zeros((n, window, 9))
+    raw9[:, :, :6] = raw6
+    for k, arr in enumerate([s_sms, s_stmp, swe]):
+        raw9[:, :, 6 + k] = arr[:, None]
+    gpF = _gp_features(raw9)
+    pmap = dict(zip(d.date.dt.strftime("%Y-%m-%d"),
+                    d.precip_mm.fillna(0).to_numpy(float)))
+    precip = np.array([pmap[s] for s in iss], dtype=np.float64)
+
     P = dict(X=X9, T=(T / tsd).astype(np.float32), last=last,
+             gpF=gpF, precip=precip,
              sid=np.zeros(n, dtype=int), issue=iss.to_numpy(), split=split,
              scale=np.repeat(tsd[None], n, 0).astype(np.float32),
              sites=np.array([site]),

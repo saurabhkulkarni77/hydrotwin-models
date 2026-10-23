@@ -35,9 +35,8 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent))
 
 from data_adapter import build_station_P, rmse_log10  # noqa: E402
-from spaces import incumbent_for  # noqa: E402
 from trainable import predict_ln, train_one  # noqa: E402
-from tune_models import load_best_lr  # noqa: E402
+from tune_models import incumbent  # noqa: E402
 
 
 def evaluate(station, family, params, proj, epochs, patience):
@@ -68,8 +67,7 @@ def main():
     entry = json.loads(reg_path.read_text())
     run = entry["history"][-1]
     cand = dict(run["best_params"])
-    inc = incumbent_for(args.family,
-                        load_best_lr(args.proj, args.family, args.station))
+    inc = incumbent(args.proj, args.family, args.station)
 
     t0 = time.time()
     inc_model, inc_rmse, n_te, inc_eps = evaluate(
@@ -106,10 +104,24 @@ def main():
     if passed:
         out_dir = HERE / "dev_weights" / args.family
         out_dir.mkdir(parents=True, exist_ok=True)
-        torch.save(cand_model.state_dict(), out_dir / f"{args.station}.pt")
-        (out_dir / f"{args.station}.json").write_text(json.dumps(
-            {"station": args.station, "family": args.family,
-             "params": cand, "gate": verdict}, indent=1))
+        if args.family == "GP":
+            # An exact GP has no torch weights: its "checkpoint" is the
+            # winning kernel config + the feature standardization the
+            # fit used (the training rows themselves stay in the repo
+            # dataset, reproducible from data/daily + the NRCS LUT).
+            (out_dir / f"{args.station}.json").write_text(json.dumps(
+                {"station": args.station, "family": args.family,
+                 "params": cand, "gate": verdict,
+                 "gp_fit": {"n_train": cand_model["n_train"],
+                            "feature_mu": cand_model["fmu"].tolist(),
+                            "feature_sd": cand_model["fsd"].tolist()}},
+                indent=1))
+        else:
+            torch.save(cand_model.state_dict(),
+                       out_dir / f"{args.station}.pt")
+            (out_dir / f"{args.station}.json").write_text(json.dumps(
+                {"station": args.station, "family": args.family,
+                 "params": cand, "gate": verdict}, indent=1))
         action = f"candidate promoted to DEV weights {out_dir}"
     else:
         action = "incumbent dev weights kept; candidate NOT promoted"

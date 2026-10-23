@@ -13,13 +13,15 @@ quality-gate verdict per station/family from the registry.
 The tuning-dev workflow calls this twice per run, both times with
 continue-on-error so a status-publish failure can never fail tuning:
 
-  * near the start:  --running "$STATION" --families "LSTM,Transformer"
+  * near the start:  --running "$STATION" --families "<all six>"
   * at the end (if: always()): no --running flag, so the JSON carries
-    the registry results the run just produced.
+    the registry results the run just produced. The idle snapshot is
+    built from EVERY registry file present, so families accumulate —
+    adding a family never drops the ones already published.
 
 Usage:
   python tuning/write_status.py [--running STATION]
-                                [--families LSTM,Transformer]
+                                [--families LSTM,Transformer,...]
                                 [--out PATH] [--registry DIR]
 
 Stdlib only. The registry directory defaults to the one next to this
@@ -73,7 +75,8 @@ def build_status(registry_dir, running_station=None, families=None):
     if running_station:
         current = {
             "station": running_station,
-            "families": families or ["LSTM", "Transformer"],
+            "families": families or ["LSTM", "Transformer", "TFT",
+                                     "PatchTST", "PILSTMv1", "GP"],
             "since": now,
             "workflow": "tuning-dev",
         }

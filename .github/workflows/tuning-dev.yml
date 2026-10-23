@@ -74,7 +74,7 @@ jobs:
         continue-on-error: true
         run: |
           python tuning/write_status.py --running "$STATION" \
-            --families "LSTM,Transformer" \
+            --families "LSTM,Transformer,TFT,PatchTST,PILSTMv1,GP" \
             --out "$RUNNER_TEMP/tuning_status.json"
           rm -rf "$RUNNER_TEMP/pages_pub"
           git clone --quiet --depth 1 --branch gh-pages \
@@ -106,6 +106,38 @@ jobs:
         continue-on-error: true
         run: python tuning/gate.py --station $STATION --family Transformer
 
+      - name: tune TFT
+        run: python tuning/tune_models.py --station $STATION --family TFT --trials $TRIALS
+
+      - name: quality gate TFT (enforced)
+        id: gate_tft
+        continue-on-error: true
+        run: python tuning/gate.py --station $STATION --family TFT
+
+      - name: tune PatchTST
+        run: python tuning/tune_models.py --station $STATION --family PatchTST --trials $TRIALS
+
+      - name: quality gate PatchTST (enforced)
+        id: gate_patchtst
+        continue-on-error: true
+        run: python tuning/gate.py --station $STATION --family PatchTST
+
+      - name: tune PILSTMv1
+        run: python tuning/tune_models.py --station $STATION --family PILSTMv1 --trials $TRIALS
+
+      - name: quality gate PILSTMv1 (enforced)
+        id: gate_pilstm
+        continue-on-error: true
+        run: python tuning/gate.py --station $STATION --family PILSTMv1
+
+      - name: tune GP
+        run: python tuning/tune_models.py --station $STATION --family GP --trials $TRIALS
+
+      - name: quality gate GP (enforced)
+        id: gate_gp
+        continue-on-error: true
+        run: python tuning/gate.py --station $STATION --family GP
+
       - name: commit registry + study journals (+ dev weights on PASS only)
         if: always()
         run: |
@@ -116,7 +148,7 @@ jobs:
           git push origin dev
 
       - name: enforce gate outcomes
-        if: steps.gate_lstm.outcome == 'failure' || steps.gate_tr.outcome == 'failure'
+        if: steps.gate_lstm.outcome == 'failure' || steps.gate_tr.outcome == 'failure' || steps.gate_tft.outcome == 'failure' || steps.gate_patchtst.outcome == 'failure' || steps.gate_pilstm.outcome == 'failure' || steps.gate_gp.outcome == 'failure'
         run: |
           echo "::error::Quality gate FAILED for at least one family — losing candidates were NOT promoted; dev weights unchanged for them. See registry verdicts."
           exit 1

@@ -10,10 +10,10 @@ existing main-branch retrain flow on a human decision.
 
 | file | role |
 |---|---|
-| `spaces.py` | Search spaces per family + the incumbent configs (current recipe from `train_export.py` / `best_lr.json`). |
-| `architectures.py` | Tunable supersets of the repo architectures (`LSTMNetX`, `TransformerX`). Identical to the repo classes at incumbent knobs (state_dict-compatible). |
-| `data_adapter.py` | Single-station datasets replicating `prepare9()` conventions (9 features: USGS + NRCS soil + SNOTEL snow, all data combined), with `tune` and `gate` folds. |
-| `trainable.py` | Training loop mirroring repo `fit()` semantics; reports val RMSE (log10 cfs) per epoch. |
+| `spaces.py` | Search spaces per family + the incumbent configs (current recipe from `train_export.py` / `best_lr.json`; GP from `classical_hyper.json`). |
+| `architectures.py` | Tunable supersets of the repo architectures (`LSTMNetX`, `TransformerX`, `TFTX`, `PatchTSTX`). Identical to the repo classes at incumbent knobs (state_dict-compatible). PILSTMv1 is `LSTMNetX` (its production architecture is `LSTMNet`); GP is an exact GP, no torch module. |
+| `data_adapter.py` | Single-station datasets replicating `prepare9()` conventions (9 features: USGS + NRCS soil + SNOTEL snow, all data combined), with `tune` and `gate` folds. Also carries `gpF` (the 11 GP kernel features on raw windows) and `precip` (issue-date precip for the PILSTMv1 physics loss). |
+| `trainable.py` | Training loop mirroring repo `fit()` semantics; reports val RMSE (log10 cfs) per epoch. PILSTMv1 adds `train_pilstm.py`'s physics loss; GP is fit exactly (Matern-5/2, Cholesky) in one shot. |
 | `tune_models.py` | Ray Tune + OptunaSearch (TPE) + ASHAScheduler. Studies persist in `studies/*.journal` (append-only, resumable, committed). The incumbent config is evaluated as trial 0 of every study. |
 | `gate.py` | **Enforced champion/challenger quality gate** (below). |
 | `registry/` | Versioned JSON per (station, family): winner params, tuned val RMSE, incumbent val RMSE, gate verdicts. `incumbents.json` holds the published protocol-B backtest references. |
@@ -50,9 +50,15 @@ blind schedule.
 
 Supported path: push a `tuning/**` change to the dev branch (or, once
 this file also exists on the default branch, dispatch
-`.github/workflows/tuning-dev.yml`). The workflow tunes + gates both
-families and commits registry entries, study journals, and any
-gate-passed dev weights back to dev.
+`.github/workflows/tuning-dev.yml`). The workflow tunes + gates all
+six families — LSTM, Transformer, TFT, PatchTST, PILSTMv1, GP — and
+commits registry entries, study journals, and any gate-passed dev
+weights back to dev. GP note: GP Matérn is not one of the five served
+ONNX models — it is the Compare-panel / ablation model (exact GP
+regression on 11 window-summary features, per-station `ls`/`noise` in
+`classical_hyper.json`); it is tuned and gated under the identical
+protocol, and a PASS publishes a config JSON (kernel + feature stats)
+instead of a `.pt`, since an exact GP has no torch weights.
 
 Locally (any normal host):
 

@@ -64,10 +64,26 @@ def init_ray(proj):
              runtime_env={"env_vars": {"PYTHONPATH": f"{proj}:{HERE}"}})
 
 
+# Families whose production recipe has no best_lr.json entry: the
+# incumbent lr is the production constant (train_pilstm.py / the
+# train_export.py fallback), not a searched value.
+DEFAULT_LR = {"PILSTMv1": 3e-3}
+
+
 def load_best_lr(proj, family, station):
+    if family in DEFAULT_LR:
+        return DEFAULT_LR[family]
     res = json.loads((Path(proj) / "best_lr.json").read_text())
     v = res[family][station]
     return float(v["best_lr"] if isinstance(v, dict) else v)
+
+
+def incumbent(proj, family, station):
+    """The family's incumbent config for this station."""
+    from spaces import gp_incumbent_for, incumbent_for
+    if family == "GP":
+        return gp_incumbent_for(proj, station)
+    return incumbent_for(family, load_best_lr(proj, family, station))
 
 
 def run_study(station, family, trials, max_epochs, proj, storage_path):
@@ -77,11 +93,11 @@ def run_study(station, family, trials, max_epochs, proj, storage_path):
     from ray.tune.schedulers import ASHAScheduler
     from ray.tune.search.optuna import OptunaSearch
 
-    from spaces import incumbent_for, space_for
+    from spaces import space_for
     from trainable import tune_trainable
 
     study = f"hydrotwin-{station}-{family.lower()}"
-    inc = incumbent_for(family, load_best_lr(proj, family, station))
+    inc = incumbent(proj, family, station)
     algo = OptunaSearch(
         space_for(family), metric="rmse", mode="min",
         sampler=optuna.samplers.TPESampler(seed=SEED, n_startup_trials=5),
@@ -138,7 +154,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--station", action="append", default=[])
     ap.add_argument("--family", action="append", required=True,
-                    choices=["LSTM", "Transformer", "TFT", "PatchTST"])
+                    choices=["LSTM", "Transformer", "TFT", "PatchTST",
+                             "PILSTMv1", "GP"])
     ap.add_argument("--trials", type=int, default=16)
     ap.add_argument("--max-epochs", type=int, default=24)
     ap.add_argument("--from-drift-report")
@@ -165,11 +182,6 @@ def main():
     rc = 0
     for station in stations:
         for family in args.family:
-            if family not in ("LSTM", "Transformer"):
-                print(f"{family}: trainable not wired yet (spaces + "
-                      f"architectures cover LSTM/Transformer in v1); "
-                      f"skipping", flush=True)
-                continue
             print(f"=== tuning {station} {family}: {args.trials} trials "
                   f"===", flush=True)
             t0 = time.time()
