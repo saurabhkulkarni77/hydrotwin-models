@@ -83,5 +83,6 @@ def tune_trainable(config, station=None, family=None, proj=None,
     t0 = time.time()
     _, best, eps = train_one(
         family, params, P, seed=0, max_epochs=max_epochs, patience=8,
-        report=lambda ep, r: _tune.report(rmse=r, epoch=ep))
-    _tune.report(rmse=best, epoch=eps, train_s=time.time() - t0)
+        report=lambda ep, r: _tune.report({"rmse": r, "epoch": ep}))
+    _tune.report({"rmse": best, "epoch": eps,
+                  "train_s": time.time() - t0})
