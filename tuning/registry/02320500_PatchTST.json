@@ -1,0 +1,52 @@
+{
+ "schema": 1,
+ "station": "02320500",
+ "family": "PatchTST",
+ "history": [
+  {
+   "run_id": "20261023T173554Z",
+   "study": "hydrotwin-02320500-patchtst",
+   "trials": 12,
+   "seed": 0,
+   "objective": "val RMSE log10(cfs), WY2025, tune fold (train <= 2024-09-30)",
+   "best_params": {
+    "batch": 128,
+    "d_heads": "64_4",
+    "dropout": 0.10911323128278679,
+    "layers": 1,
+    "lr": 0.001904767808428205,
+    "patch": 7,
+    "wd": 2.6919058249260712e-06,
+    "window": 21
+   },
+   "best_val_rmse_log10": 0.0411,
+   "incumbent_params": {
+    "lr": 0.001,
+    "wd": 1e-05,
+    "batch": 256,
+    "window": 29,
+    "layers": 2,
+    "dropout": 0.0,
+    "d_heads": "64_4",
+    "patch": 7
+   },
+   "incumbent_val_rmse_log10": 0.04465784004932711,
+   "gate": {
+    "date": "2026-10-23T17:36:19Z",
+    "holdout": "WY2026 (first-forecast 2025-10-01..2026-09-30), RMSE log10(cfs)",
+    "protocol": "train span <= 2025-09-30, early stop Apr-Sep 2025",
+    "n_holdout_windows_incumbent": 326,
+    "n_holdout_windows_candidate": 334,
+    "incumbent_rmse": 0.025,
+    "candidate_rmse": 0.0248,
+    "margin": 0.0002,
+    "margin_pct": 0.78,
+    "incumbent_epochs": 12,
+    "candidate_epochs": 12,
+    "verdict": "PASS",
+    "published_protocol_B_reference_rmse": null
+   }
+  }
+ ],
+ "updated": "2026-10-23T17:36:19Z"
+}

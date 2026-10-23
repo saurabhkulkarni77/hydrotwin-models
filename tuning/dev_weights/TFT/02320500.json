@@ -1,0 +1,28 @@
+{
+ "station": "02320500",
+ "family": "TFT",
+ "params": {
+  "batch": 256,
+  "d_heads": "48_4",
+  "dropout": 0.12271426473412705,
+  "layers": 1,
+  "lr": 0.0031841783191717773,
+  "wd": 0.0006000771179059812,
+  "window": 29
+ },
+ "gate": {
+  "date": "2026-10-23T17:33:34Z",
+  "holdout": "WY2026 (first-forecast 2025-10-01..2026-09-30), RMSE log10(cfs)",
+  "protocol": "train span <= 2025-09-30, early stop Apr-Sep 2025",
+  "n_holdout_windows_incumbent": 326,
+  "n_holdout_windows_candidate": 326,
+  "incumbent_rmse": 0.0248,
+  "candidate_rmse": 0.0245,
+  "margin": 0.0003,
+  "margin_pct": 1.24,
+  "incumbent_epochs": 18,
+  "candidate_epochs": 10,
+  "verdict": "PASS",
+  "published_protocol_B_reference_rmse": null
+ }
+}
