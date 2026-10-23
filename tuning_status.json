@@ -1,29 +1,69 @@
 {
  "schema": 1,
- "generated_at": "2026-10-23T16:09:30Z",
+ "generated_at": "2026-10-23T16:27:41Z",
  "running": false,
  "current": null,
  "stations": {
   "01463500": {
+   "GP": {
+    "verdict": "PASS",
+    "margin_pct": 4.92,
+    "candidate_rmse": 0.1411,
+    "incumbent_rmse": 0.1484,
+    "trials": 12,
+    "best_val_rmse": 0.1652,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T16:27:39Z"
+   },
    "LSTM": {
     "verdict": "FAIL",
-    "margin_pct": -0.27,
-    "candidate_rmse": 0.1434,
+    "margin_pct": -0.95,
+    "candidate_rmse": 0.1444,
     "incumbent_rmse": 0.1431,
-    "trials": 12,
-    "best_val_rmse": 0.1608,
+    "trials": 24,
+    "best_val_rmse": 0.1584,
     "holdout": "WY2026",
-    "updated": "2026-10-23T04:51:18Z"
+    "updated": "2026-10-23T16:08:22Z"
    },
-   "Transformer": {
+   "PILSTMv1": {
     "verdict": "FAIL",
     "margin_pct": 0.0,
     "candidate_rmse": 0.1422,
     "incumbent_rmse": 0.1422,
     "trials": 12,
-    "best_val_rmse": 0.1596,
+    "best_val_rmse": 0.1629,
     "holdout": "WY2026",
-    "updated": "2026-10-23T04:55:11Z"
+    "updated": "2026-10-23T16:24:18Z"
+   },
+   "PatchTST": {
+    "verdict": "PASS",
+    "margin_pct": 0.54,
+    "candidate_rmse": 0.1542,
+    "incumbent_rmse": 0.155,
+    "trials": 12,
+    "best_val_rmse": 0.1647,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T16:20:50Z"
+   },
+   "TFT": {
+    "verdict": "FAIL",
+    "margin_pct": 0.0,
+    "candidate_rmse": 0.1459,
+    "incumbent_rmse": 0.1459,
+    "trials": 12,
+    "best_val_rmse": 0.1602,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T16:17:04Z"
+   },
+   "Transformer": {
+    "verdict": "FAIL",
+    "margin_pct": -2.25,
+    "candidate_rmse": 0.1454,
+    "incumbent_rmse": 0.1422,
+    "trials": 24,
+    "best_val_rmse": 0.1582,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T16:12:12Z"
    }
   },
   "01646500": {
@@ -159,16 +199,6 @@
    }
   },
   "08057000": {
-   "GP": {
-    "verdict": "PASS",
-    "margin_pct": 1.92,
-    "candidate_rmse": 0.3063,
-    "incumbent_rmse": 0.3123,
-    "trials": 12,
-    "best_val_rmse": 0.3136,
-    "holdout": "WY2026",
-    "updated": "2026-10-23T16:09:29Z"
-   },
    "LSTM": {
     "verdict": "PASS",
     "margin_pct": 2.16,
@@ -177,37 +207,7 @@
     "trials": 36,
     "best_val_rmse": 0.3128,
     "holdout": "WY2026",
-    "updated": "2026-10-23T15:41:33Z"
-   },
-   "PILSTMv1": {
-    "verdict": "FAIL",
-    "margin_pct": -2.15,
-    "candidate_rmse": 0.3071,
-    "incumbent_rmse": 0.3007,
-    "trials": 12,
-    "best_val_rmse": 0.3083,
-    "holdout": "WY2026",
-    "updated": "2026-10-23T16:04:58Z"
-   },
-   "PatchTST": {
-    "verdict": "PASS",
-    "margin_pct": 7.05,
-    "candidate_rmse": 0.3017,
-    "incumbent_rmse": 0.3246,
-    "trials": 12,
-    "best_val_rmse": 0.323,
-    "holdout": "WY2026",
-    "updated": "2026-10-23T16:00:04Z"
-   },
-   "TFT": {
-    "verdict": "FAIL",
-    "margin_pct": -0.14,
-    "candidate_rmse": 0.2974,
-    "incumbent_rmse": 0.297,
-    "trials": 12,
-    "best_val_rmse": 0.3022,
-    "holdout": "WY2026",
-    "updated": "2026-10-23T15:55:16Z"
+    "updated": "2026-10-23T15:51:49Z"
    },
    "Transformer": {
     "verdict": "FAIL",
@@ -217,7 +217,7 @@
     "trials": 36,
     "best_val_rmse": 0.3105,
     "holdout": "WY2026",
-    "updated": "2026-10-23T15:47:33Z"
+    "updated": "2026-10-23T15:57:40Z"
    }
   },
   "08158000": {
