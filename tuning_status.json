@@ -1,17 +1,8 @@
 {
  "schema": 1,
- "generated_at": "2026-10-23T06:23:26Z",
- "running": true,
- "current": {
-  "station": "09380000",
-  "families": [
-   "LSTM",
-   "Transformer"
-  ],
-  "since": "2026-10-23T06:23:26Z",
-  "workflow": "tuning-dev",
-  "run_url": "https://github.com/saurabhkulkarni77/hydrotwin-models/actions/runs/39911081732"
- },
+ "generated_at": "2026-10-23T06:35:10Z",
+ "running": false,
+ "current": null,
  "stations": {
   "01463500": {
    "LSTM": {
@@ -231,6 +222,28 @@
     "best_val_rmse": 0.1016,
     "holdout": "WY2026",
     "updated": "2026-10-23T06:21:19Z"
+   }
+  },
+  "09380000": {
+   "LSTM": {
+    "verdict": "PASS",
+    "margin_pct": 6.03,
+    "candidate_rmse": 0.0257,
+    "incumbent_rmse": 0.0273,
+    "trials": 12,
+    "best_val_rmse": 0.028,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T06:28:15Z"
+   },
+   "Transformer": {
+    "verdict": "FAIL",
+    "margin_pct": -0.6,
+    "candidate_rmse": 0.0286,
+    "incumbent_rmse": 0.0285,
+    "trials": 12,
+    "best_val_rmse": 0.0272,
+    "holdout": "WY2026",
+    "updated": "2026-10-23T06:35:09Z"
    }
   }
  },
